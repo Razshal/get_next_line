@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 17:03:53 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/08 18:16:18 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/09 11:24:43 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ int get_next_line(const int fd, char **line);
 
 typedef struct	s_fd_list
 {
-	char	*str;
-	int		fd;
-	int		line;
+	char				*overflow;
+	int					fd;
+	struct s_fd_list	*next;
 }				t_fd_list;
 
 #endif

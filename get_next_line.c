@@ -6,13 +6,13 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/08 19:13:53 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/09 13:25:50 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char *ft_realloc(char *str, char *str_to_add)
+char		*ft_realloc_and_copy(char *str, char *str_to_add)
 {
 	char *copy;
 
@@ -29,13 +29,55 @@ char *ft_realloc(char *str, char *str_to_add)
 	return (str);
 }
 
-
-
-int get_next_line(const int fd, char **line)
+char	*ft_copy_a_line(char *str)
 {
-	static f_list *list;
+	char *copy;
+	int count;
+
+	count = 0;
+	if (!str)
+		return (NULL);
+	while (str[count] != '\n' || str[count] != '\0')
+		count++;
+	copy = ft_strnew(count);
+	ft_strncpy(copy, str, count);
+	return (copy);
+}
+
+
+t_fd_list	*get_node(int fd, t_fd_list *list)
+{
+	t_fd_list current;
+
+	if (list && list->fd == fd)
+		return (list);
+	while (list->fd != fd && list->next)
+		list = list->next;
+	if (list->fd == fd)
+		return (list);
+	return (0);
+}
+
+t_fd_list	*new_node(int fd, char *overflow, t_fd_list next)
+{
+	t_fd_list *new;
+
+	if (!(new = (t_fd_list*)malloc(sizeof(t_fd_list))))
+		return (NULL);
+	new->overflow = overflow;
+	new->fd = fd;
+	new->next = NULL;
+	return (new);
+}
+
+//copy_after_first_return()
+
+int			get_next_line(const int fd, char **line)
+{
+	static t_fd_list	*list;
+	char				*temp
 
 	list = NULL;
-	
+	if (!read(fd, get_node(fd, list)->
 	
 }
