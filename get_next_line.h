@@ -6,13 +6,14 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 17:03:53 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/09 11:24:43 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/09 13:51:24 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 #define GET_NEXT_LINE_H
 #include <stdlib.h>
+#include <unistd.h>
 #include "libft/libft.h"
 
 int get_next_line(const int fd, char **line);

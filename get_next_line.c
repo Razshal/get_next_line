@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/09 13:25:50 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/09 13:52:47 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,16 @@ t_fd_list	*new_node(int fd, char *overflow, t_fd_list next)
 int			get_next_line(const int fd, char **line)
 {
 	static t_fd_list	*list;
-	char				*temp
+	char				*temp;
 
 	list = NULL;
-	if (!read(fd, get_node(fd, list)->
+	if (get_node(fd) && get_node(fd)->overflow)
+	{
+		
+	}
+	if(!(temp = ft_strnew(BUFF_SIZE + 1)))
+		return (-1);
+	if (!read(fd, temp, BUFF_SIZE))
+		return (0);
 	
 }
