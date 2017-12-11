@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/11 13:33:00 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/11 16:52:48 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ static char		*realloc_and_copy(char *str, char *str_to_add)
 {
 	char *copy;
 
+	if (!str)
+		str = ft_strnew(ft_strlen(str_to_add));
 	if (!(copy = ft_strnew(ft_strlen(str))))
 		return (NULL);
 	if (!str_to_add)
@@ -53,11 +55,15 @@ int			get_next_line(const int fd, char **line)
 		return (-1);
 	if (!read(fd, temp, BUFF_SIZE))
 		return (0);
+	if (!*line)
+		*line = ft_strnew(0);
 	while (!ft_strchr(*line, '\n'))
 	{
 		if (temp)
 		{
+			printf("temp exists\n");
 			*line = realloc_and_copy(*line, ft_copy_a_line(temp));
+			printf("realloc works\n");
 			temp = ft_strchr(temp, '\n');
 		}
 		else if (!read(fd, temp, BUFF_SIZE))

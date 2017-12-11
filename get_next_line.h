@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 17:03:53 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/09 13:51:24 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/11 13:43:58 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,10 @@
 #include <unistd.h>
 #include "libft/libft.h"
 
-int get_next_line(const int fd, char **line);
+#include <stdio.h>
+
 #define BUFF_SIZE 32
 
-typedef struct	s_fd_list
-{
-	char				*overflow;
-	int					fd;
-	struct s_fd_list	*next;
-}				t_fd_list;
+int get_next_line(const int fd, char **line);
 
 #endif
