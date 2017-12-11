@@ -6,17 +6,17 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/09 13:52:47 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/11 13:33:00 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char		*ft_realloc_and_copy(char *str, char *str_to_add)
+static char		*realloc_and_copy(char *str, char *str_to_add)
 {
 	char *copy;
 
-	if (!str || !(copy = ft_strnew(ft_strlen(str))))
+	if (!(copy = ft_strnew(ft_strlen(str))))
 		return (NULL);
 	if (!str_to_add)
 		return (str);
@@ -29,7 +29,7 @@ char		*ft_realloc_and_copy(char *str, char *str_to_add)
 	return (str);
 }
 
-char	*ft_copy_a_line(char *str)
+static char	*ft_copy_a_line(char *str)
 {
 	char *copy;
 	int count;
@@ -44,47 +44,24 @@ char	*ft_copy_a_line(char *str)
 	return (copy);
 }
 
-
-t_fd_list	*get_node(int fd, t_fd_list *list)
-{
-	t_fd_list current;
-
-	if (list && list->fd == fd)
-		return (list);
-	while (list->fd != fd && list->next)
-		list = list->next;
-	if (list->fd == fd)
-		return (list);
-	return (0);
-}
-
-t_fd_list	*new_node(int fd, char *overflow, t_fd_list next)
-{
-	t_fd_list *new;
-
-	if (!(new = (t_fd_list*)malloc(sizeof(t_fd_list))))
-		return (NULL);
-	new->overflow = overflow;
-	new->fd = fd;
-	new->next = NULL;
-	return (new);
-}
-
-//copy_after_first_return()
-
 int			get_next_line(const int fd, char **line)
 {
-	static t_fd_list	*list;
-	char				*temp;
+	static char *temp;
 
-	list = NULL;
-	if (get_node(fd) && get_node(fd)->overflow)
-	{
-		
-	}
-	if(!(temp = ft_strnew(BUFF_SIZE + 1)))
+	temp = NULL;
+	if (!(temp = ft_strnew(BUFF_SIZE + 1)))
 		return (-1);
 	if (!read(fd, temp, BUFF_SIZE))
 		return (0);
-	
+	while (!ft_strchr(*line, '\n'))
+	{
+		if (temp)
+		{
+			*line = realloc_and_copy(*line, ft_copy_a_line(temp));
+			temp = ft_strchr(temp, '\n');
+		}
+		else if (!read(fd, temp, BUFF_SIZE))
+			return (0);
+	}
+	return (1);
 }
