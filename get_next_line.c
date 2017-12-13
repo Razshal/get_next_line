@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/13 20:11:42 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/13 20:31:37 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,20 +49,37 @@ static char	*copy_a_line(char *str)
 	return (copy);
 }
 
+static char	*after_n(char *str)
+{
+	char *copy;
+
+	if (str)
+	{
+		copy = ft_strdup(ft_strchr(str, '\n') + 1);
+		ft_strcpy(str, copy);
+		free(copy);
+		return (str);
+	}
+	return (NULL);
+}
+
 static int	fill_line(char **line, char *temp, const int fd)
 {
 	int cursor;
 
 	cursor = 0;
+	if (temp)
+	{
+		*line = ft_strjoin_custom(*line, copy_a_line(temp));
+		temp = after_n(temp);
+	}
 	if (!ft_strchr(temp, '\n') && (cursor = read(fd, temp, BUFF_SIZE)) < 1)
 		return (cursor);
 	if (cursor == 1)
 		temp[cursor] = '\0';
 	*line = ft_strjoin_custom(*line, copy_a_line(temp));
-	printf("line:%s\n", *line);
 	if (!ft_strchr(temp, '\n'))
 		return (fill_line(line, temp, fd));
-	printf("one\n");
 	return (1);
 }
 
@@ -80,9 +97,6 @@ int			get_next_line(const int fd, char **line)
 		return (-1);
 	if ((cursor = fill_line(&local_line, temp, fd)) == 1)
 	{
-		swap = ft_strdup(ft_strchr(temp, '\n') + 1);
-		free(temp);
-		temp = swap;
 		*line = local_line;
 		return (1);
 	}
