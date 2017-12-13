@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/13 19:52:45 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/13 20:11:42 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,11 @@ static int	fill_line(char **line, char *temp, const int fd)
 		return (cursor);
 	if (cursor == 1)
 		temp[cursor] = '\0';
-	printf("temp:%s\n", temp);
 	*line = ft_strjoin_custom(*line, copy_a_line(temp));
+	printf("line:%s\n", *line);
 	if (!ft_strchr(temp, '\n'))
 		return (fill_line(line, temp, fd));
+	printf("one\n");
 	return (1);
 }
 
@@ -69,21 +70,26 @@ int			get_next_line(const int fd, char **line)
 {
 	static char		*temp;
 	char			*swap;
+	char			*local_line;
 	unsigned int	cursor;
 
 	cursor = 0;
+	swap = NULL;
+	local_line = NULL;
 	if (!temp && !(temp = ft_strnew(BUFF_SIZE)))
 		return (-1);
-	if ((cursor = fill_line(line, temp, fd)) == 1)
+	if ((cursor = fill_line(&local_line, temp, fd)) == 1)
 	{
-		temp = ft_strdup(ft_strchr(temp, '\n') + 1);
+		swap = ft_strdup(ft_strchr(temp, '\n') + 1);
 		free(temp);
 		temp = swap;
+		*line = local_line;
 		return (1);
 	}
 	else if (cursor == 0)
 	{
-		ft_memdel((void**)&temp);
+		if (temp)
+			ft_memdel((void**)&temp);
 		return (0);
 	}
 	return (cursor);
