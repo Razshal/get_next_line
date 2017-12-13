@@ -6,39 +6,30 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/13 11:57:46 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/13 14:02:21 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*realloc_and_copy(char *str, char *str_to_add)
+char	*ft_strjoin_custom(char *s1, char *s2)
 {
-	char *copy;
+	char	*newstr;
+	size_t	alloc_length;
 
-	if (!str)
+	newstr = NULL;
+	if (s1 && s2)
 	{
-		str = ft_strnew(ft_strlen(str_to_add));
-		return (ft_strcpy(str, str_to_add));
+		alloc_length = (size_t)(ft_strlen(s1) + ft_strlen(s2) + 1);
+		newstr = (ft_strnew(alloc_length));
+		if (newstr == NULL)
+			return (NULL);
+		ft_strcat(newstr, s1);
+		ft_strcat(newstr, s2);
+		free(s1);
+		free(s2);
 	}
-	if (!(copy = ft_strnew(ft_strlen(str))))
-	{
-		printf("NULL REALLOC\n");
-		return (NULL);
-	}
-	if (!str_to_add)
-	{
-		printf("no str to add\n");
-		return (str);
-	}
-	ft_strcpy(copy, str);
-	str = ft_strnew(ft_strlen(copy) + ft_strlen(str_to_add) - 1);
-	ft_strcat(str, copy);
-	ft_strcat(str, str_to_add);
-	ft_memdel((void**)&copy);
-	ft_memdel((void**)&str_to_add);
-				printf("str realloced :%s\n", str);
-	return (str);
+	return (newstr);
 }
 
 static char	*copy_a_line(char *str)
@@ -56,37 +47,58 @@ static char	*copy_a_line(char *str)
 	return (copy);
 }
 
+static int	fill_line(char **line, char *temp, const int fd)
+{
+	int cursor;
+
+	cursor = 0;
+	while (temp && !ft_strchr(temp, '\n'))
+	{
+		*line = ft_strjoin_custom(*line, copy_a_line(temp));
+		if ((cursor = read(fd, temp, BUFF_SIZE)) < 1)
+			{
+				if (cursor == 0)
+			}
+			return (cursor);
+		else
+			return (fill_line(line, temp, fd));
+	}
+	if (ft_strchr(temp, '\n'))
+	{
+		*line = ft_strjoin_custom(*line, copy_a_line(temp));
+		return (1);
+	}
+	return (-1);
+}
+
 int			get_next_line(const int fd, char **line)
 {
 	static char		*temp;
+	char			*swap;
 	unsigned int	cursor;
 
 	cursor = 0;
 	if (!temp)
 	{
-		if (!(temp = ft_strnew(BUFF_SIZE + 1)))
+		if (!(temp = ft_strnew(BUFF_SIZE)))
 			return (-1);
 		if ((cursor = read(fd, temp, BUFF_SIZE)) < 1)
 			return (cursor);
 		temp[cursor] = '\0';
 	}
 	*line = ft_strnew(0);
-	while (!ft_strchr(*line, '\n'))
+	if ((cursor = fill_line(line, temp, fd)) == 1)
 	{
-
-		*line = realloc_and_copy(*line, copy_a_line(temp));
-		if (temp && ft_strchr(temp, '\n'))
-		{
-			temp = ft_strchr(temp, '\n') + 1;
-			printf("temp :%s\n", temp);
-			return (1);
-		}
-		else if ((cursor = read(fd, temp, BUFF_SIZE)) < 1)
-		{
-			ft_memdel((void**)&temp);
-			return (cursor);
-		}
-		temp[cursor] = '\0';
+		swap = ft_strdup(ft_strchr(temp, '\n') + 1);
+		free(temp);
+		temp = swap;
+		swap = NULL;
+		return (1);
 	}
-	return (1);
+	else if (cursor == 0)
+	{
+		ft_memdel((void**)&temp);
+		return (0);
+	}
+	return (cursor);
 }
