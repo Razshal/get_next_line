@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/11 19:53:41 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/13 11:57:46 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,22 @@ static char	*realloc_and_copy(char *str, char *str_to_add)
 		return (ft_strcpy(str, str_to_add));
 	}
 	if (!(copy = ft_strnew(ft_strlen(str))))
+	{
+		printf("NULL REALLOC\n");
 		return (NULL);
+	}
 	if (!str_to_add)
+	{
+		printf("no str to add\n");
 		return (str);
+	}
 	ft_strcpy(copy, str);
 	str = ft_strnew(ft_strlen(copy) + ft_strlen(str_to_add) - 1);
 	ft_strcat(str, copy);
 	ft_strcat(str, str_to_add);
 	ft_memdel((void**)&copy);
 	ft_memdel((void**)&str_to_add);
+				printf("str realloced :%s\n", str);
 	return (str);
 }
 
@@ -61,31 +68,25 @@ int			get_next_line(const int fd, char **line)
 			return (-1);
 		if ((cursor = read(fd, temp, BUFF_SIZE)) < 1)
 			return (cursor);
-		if (cursor)
-			temp[cursor] = '\0';
+		temp[cursor] = '\0';
 	}
-	if (!*line)
-		*line = ft_strnew(0);
+	*line = ft_strnew(0);
 	while (!ft_strchr(*line, '\n'))
 	{
-		if (temp)
+
+		*line = realloc_and_copy(*line, copy_a_line(temp));
+		if (temp && ft_strchr(temp, '\n'))
 		{
-			*line = realloc_and_copy(*line, copy_a_line(temp));
-			if (temp && ft_strchr(temp, '\n'))
-			{
-				temp = ft_strchr(temp, '\n') + 1;
-				printf("temp :%s\n", temp);
-				return (1);
-			}
-			else if ((cursor = read(fd, temp, BUFF_SIZE)) < 1)
-			{
-				ft_memdel((void**)temp);
-				return (cursor);
-			}
-			temp[cursor] = '\0';
+			temp = ft_strchr(temp, '\n') + 1;
+			printf("temp :%s\n", temp);
+			return (1);
 		}
-		else
-			return (-1);
+		else if ((cursor = read(fd, temp, BUFF_SIZE)) < 1)
+		{
+			ft_memdel((void**)&temp);
+			return (cursor);
+		}
+		temp[cursor] = '\0';
 	}
 	return (1);
 }
