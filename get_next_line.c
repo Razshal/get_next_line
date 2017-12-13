@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/13 16:05:38 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/13 19:52:45 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ char	*ft_strjoin_custom(char *s1, char *s2)
 	size_t	alloc_length;
 
 	newstr = NULL;
+	if (!s1 && s2)
+		return (ft_strdup(s2));
 	if (s1 && s2)
 	{
 		alloc_length = (size_t)(ft_strlen(s1) + ft_strlen(s2) + 1);
@@ -52,23 +54,15 @@ static int	fill_line(char **line, char *temp, const int fd)
 	int cursor;
 
 	cursor = 0;
-	while (temp && !ft_strchr(temp, '\n'))
-	{
-		*line = ft_strjoin_custom(*line, copy_a_line(temp));
-		if ((cursor = read(fd, temp, BUFF_SIZE)) < 1)
-		{
-			ft_memdel((void**)&*line);
-			return (cursor);
-		}
-		else
-			return (fill_line(line, temp, fd));
-	}
-	if (ft_strchr(temp, '\n'))
-	{
-		*line = ft_strjoin_custom(*line, copy_a_line(temp));
-		return (1);
-	}
-	return (0);
+	if (!ft_strchr(temp, '\n') && (cursor = read(fd, temp, BUFF_SIZE)) < 1)
+		return (cursor);
+	if (cursor == 1)
+		temp[cursor] = '\0';
+	printf("temp:%s\n", temp);
+	*line = ft_strjoin_custom(*line, copy_a_line(temp));
+	if (!ft_strchr(temp, '\n'))
+		return (fill_line(line, temp, fd));
+	return (1);
 }
 
 int			get_next_line(const int fd, char **line)
@@ -78,21 +72,13 @@ int			get_next_line(const int fd, char **line)
 	unsigned int	cursor;
 
 	cursor = 0;
-	if (!temp)
-	{
-		if (!(temp = ft_strnew(BUFF_SIZE)))
-			return (-1);
-		if ((cursor = read(fd, temp, BUFF_SIZE)) < 1)
-			return (cursor);
-		temp[cursor] = '\0';
-	}
-	*line = ft_strnew(0);
+	if (!temp && !(temp = ft_strnew(BUFF_SIZE)))
+		return (-1);
 	if ((cursor = fill_line(line, temp, fd)) == 1)
 	{
-		swap = ft_strdup(ft_strchr(temp, '\n') + 1);
+		temp = ft_strdup(ft_strchr(temp, '\n') + 1);
 		free(temp);
 		temp = swap;
-		swap = NULL;
 		return (1);
 	}
 	else if (cursor == 0)

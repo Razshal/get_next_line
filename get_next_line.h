@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 17:03:53 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/13 16:18:17 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/13 19:53:15 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 #include <stdio.h>
 
-#define BUFF_SIZE 7
+#define BUFF_SIZE 10
 
 int get_next_line(const int fd, char **line);
 
