@@ -6,13 +6,13 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/14 16:44:18 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/14 19:00:08 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_strjoin_custom(char *s1, char *s2)
+static char	*ft_strjoin_custom(char *s1, char *s2)
 {
 	char	*newstr;
 	size_t	alloc_length;
@@ -23,8 +23,7 @@ char	*ft_strjoin_custom(char *s1, char *s2)
 	if (s1 && s2)
 	{
 		alloc_length = (size_t)(ft_strlen(s1) + ft_strlen(s2) + 1);
-		newstr = (ft_strnew(alloc_length));
-		if (newstr == NULL)
+		if (!(newstr = ft_strnew(alloc_length)))
 			return (NULL);
 		ft_strcat(newstr, s1);
 		ft_strcat(newstr, s2);
@@ -44,7 +43,8 @@ static char	*copy_a_line(char *str)
 		return (NULL);
 	while (str[count] && str[count] != '\n')
 		count++;
-	copy = ft_strnew(count);
+	if (!(copy = ft_strnew(count)))
+		return (NULL);
 	ft_strncpy(copy, str, count);
 	return (copy);
 }
@@ -69,14 +69,16 @@ static char	*after_n(char *str)
 
 static int	fill_line(char **line, char *temp, const int fd)
 {
-	int cursor;
+	long cursor;
 
 	cursor = 0;
-	if (!temp[0] && !ft_strchr(temp, '\n') 
-			&& (cursor = read(fd, temp, BUFF_SIZE)) == 1)
+	if (!temp[0] && !ft_strchr(temp, '\n'))
+	{
+		cursor = read(fd, temp, BUFF_SIZE);
+		if (cursor < 1)
+			return (cursor);
 		temp[cursor] = '\0';
-	else if (cursor < 1)
-		return (cursor);
+	}
 	*line = ft_strjoin_custom(*line, copy_a_line(temp));
 	if (ft_strchr(temp, '\n'))
 		return (1);
@@ -92,28 +94,23 @@ int			get_next_line(const int fd, char **line)
 {
 	static char		*temp;
 	char			*local_line;
-	unsigned int	cursor;
+	long			cursor;
 
 	cursor = 0;
 	local_line = NULL;
-	if (!temp && !(temp = ft_strnew(BUFF_SIZE)))
+	if ((!temp && !(temp = ft_strnew(BUFF_SIZE)))
+			|| BUFF_SIZE < 1 || fd < 0 || !line)
 		return (-1);
-	if ((cursor = fill_line(&local_line, temp, fd)) == 1)
+	cursor = fill_line(&local_line, temp, fd);
+	if (cursor == -1)
+		return (-1);
+	if (local_line && cursor >= 0)
 	{
 		temp = after_n(temp);
 		*line = local_line;
 		return (1);
 	}
-	else if (cursor == 0)
-	{
-		if (local_line)
-		{
-			*line = local_line;
-			return (1);
-		}
-		else if (temp)
-			ft_memdel((void**)&temp);
-		return (0);
-	}
+	else if (cursor == 0 && temp)
+		ft_memdel((void**)&temp);
 	return (cursor);
 }
