@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/14 16:00:25 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/14 16:44:18 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,13 @@ static char	*after_n(char *str)
 	if (str && str[0])
 	{
 		after = ft_strchr(str, '\n');
-		after++;
-		str = ft_strcpy(str, after);
+		if (after + 1)
+		{
+			after++;
+			str = ft_strcpy(str, after);
+		}
+		else
+			ft_memset(str, '\0', BUFF_SIZE);
 	}
 	return (str);
 }
@@ -67,12 +72,11 @@ static int	fill_line(char **line, char *temp, const int fd)
 	int cursor;
 
 	cursor = 0;
-	if (temp && temp[0])
-		*line = ft_strjoin_custom(*line, copy_a_line(temp));
-	if (!ft_strchr(temp, '\n') && (cursor = read(fd, temp, BUFF_SIZE)) < 1)
-		return (cursor);
-	if (cursor == 1)
+	if (!temp[0] && !ft_strchr(temp, '\n') 
+			&& (cursor = read(fd, temp, BUFF_SIZE)) == 1)
 		temp[cursor] = '\0';
+	else if (cursor < 1)
+		return (cursor);
 	*line = ft_strjoin_custom(*line, copy_a_line(temp));
 	if (ft_strchr(temp, '\n'))
 		return (1);
@@ -102,7 +106,12 @@ int			get_next_line(const int fd, char **line)
 	}
 	else if (cursor == 0)
 	{
-		if (temp)
+		if (local_line)
+		{
+			*line = local_line;
+			return (1);
+		}
+		else if (temp)
 			ft_memdel((void**)&temp);
 		return (0);
 	}
