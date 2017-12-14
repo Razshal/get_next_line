@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/14 19:00:08 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/14 19:15:01 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,22 +72,22 @@ static int	fill_line(char **line, char *temp, const int fd)
 	long cursor;
 
 	cursor = 0;
-	if (!temp[0] && !ft_strchr(temp, '\n'))
+	if (temp[0])
+		*line = ft_strjoin_custom(*line, copy_a_line(temp));
+	while ((cursor = read(fd, temp, BUFF_SIZE)))
 	{
-		cursor = read(fd, temp, BUFF_SIZE);
-		if (cursor < 1)
+		if (cursor < 0)
 			return (cursor);
 		temp[cursor] = '\0';
+		if (cursor < 1)
+			return (cursor);
+		*line = ft_strjoin_custom(*line, copy_a_line(temp));
+		if (ft_strchr(temp, '\n'))
+			return (1);
+		else
+			ft_memset(temp, '\0', BUFF_SIZE);
 	}
-	*line = ft_strjoin_custom(*line, copy_a_line(temp));
-	if (ft_strchr(temp, '\n'))
-		return (1);
-	else
-	{
-		ft_memset(temp, '\0', BUFF_SIZE);
-		return (fill_line(line, temp, fd));
-	}
-	return (1);
+	return (0);
 }
 
 int			get_next_line(const int fd, char **line)

@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 17:03:53 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/14 18:24:45 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/14 19:40:55 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 # define GET_NEXT_LINE_H
 # include <stdlib.h>
 # include <unistd.h>
-
-#include <stdio.h>
-
 # include "libft/libft.h"
 # define BUFF_SIZE 1
 
