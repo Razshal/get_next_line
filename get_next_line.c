@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/13 20:31:37 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/14 13:43:10 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,15 @@ static char	*copy_a_line(char *str)
 
 static char	*after_n(char *str)
 {
-	char *copy;
+	char *after;
 
-	if (str)
+	if (str && str[0])
 	{
-		copy = ft_strdup(ft_strchr(str, '\n') + 1);
-		ft_strcpy(str, copy);
-		free(copy);
-		return (str);
+		after = ft_strchr(str, '\n');
+		after++;
+		str = ft_strcpy(str, after);
 	}
-	return (NULL);
+	return (str);
 }
 
 static int	fill_line(char **line, char *temp, const int fd)
@@ -68,18 +67,20 @@ static int	fill_line(char **line, char *temp, const int fd)
 	int cursor;
 
 	cursor = 0;
-	if (temp)
-	{
+	if (temp && temp[0])
 		*line = ft_strjoin_custom(*line, copy_a_line(temp));
-		temp = after_n(temp);
-	}
 	if (!ft_strchr(temp, '\n') && (cursor = read(fd, temp, BUFF_SIZE)) < 1)
 		return (cursor);
 	if (cursor == 1)
 		temp[cursor] = '\0';
 	*line = ft_strjoin_custom(*line, copy_a_line(temp));
-	if (!ft_strchr(temp, '\n'))
+	if (ft_strchr(temp, '\n'))
+		return (1);
+	else
+	{
+		ft_memset(temp, '\0', BUFF_SIZE);
 		return (fill_line(line, temp, fd));
+	}
 	return (1);
 }
 
@@ -97,6 +98,7 @@ int			get_next_line(const int fd, char **line)
 		return (-1);
 	if ((cursor = fill_line(&local_line, temp, fd)) == 1)
 	{
+		temp = after_n(temp);
 		*line = local_line;
 		return (1);
 	}
