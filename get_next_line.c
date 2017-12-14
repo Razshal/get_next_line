@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/14 13:43:10 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/14 16:00:25 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,12 +87,10 @@ static int	fill_line(char **line, char *temp, const int fd)
 int			get_next_line(const int fd, char **line)
 {
 	static char		*temp;
-	char			*swap;
 	char			*local_line;
 	unsigned int	cursor;
 
 	cursor = 0;
-	swap = NULL;
 	local_line = NULL;
 	if (!temp && !(temp = ft_strnew(BUFF_SIZE)))
 		return (-1);
