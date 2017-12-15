@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/15 14:11:54 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/15 14:54:56 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static char	*ft_strjoin_custom(char *s1, char *s2)
 
 	newstr = NULL;
 	if (!s1 && s2)
-		return (ft_strdup(s2));
+		return (s2);
 	if (s1 && s2)
 	{
 		alloc_length = (size_t)(ft_strlen(s1) + ft_strlen(s2) + 1);
@@ -107,10 +107,7 @@ int			get_next_line(const int fd, char **line)
 		return (-1);
 	cursor = fill_line(&local_line, temp, fd);
 	if (cursor == -1)
-	{
-		ft_memdel((void**)&local_line);
 		return (-1);
-	}
 	if (local_line && cursor >= 0)
 	{
 		temp = after_n(temp);
