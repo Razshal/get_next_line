@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/14 19:15:01 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/15 14:11:54 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,11 @@ static int	fill_line(char **line, char *temp, const int fd)
 
 	cursor = 0;
 	if (temp[0])
+	{
 		*line = ft_strjoin_custom(*line, copy_a_line(temp));
+		if (ft_strchr(temp, '\n'))
+			return (1);
+	}
 	while ((cursor = read(fd, temp, BUFF_SIZE)))
 	{
 		if (cursor < 0)
@@ -103,14 +107,17 @@ int			get_next_line(const int fd, char **line)
 		return (-1);
 	cursor = fill_line(&local_line, temp, fd);
 	if (cursor == -1)
+	{
+		ft_memdel((void**)&local_line);
 		return (-1);
+	}
 	if (local_line && cursor >= 0)
 	{
 		temp = after_n(temp);
 		*line = local_line;
 		return (1);
 	}
-	else if (cursor == 0 && temp)
+	if (cursor == 0 && temp)
 		ft_memdel((void**)&temp);
 	return (cursor);
 }
