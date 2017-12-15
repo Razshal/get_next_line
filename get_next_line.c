@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/15 14:54:56 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/15 18:33:48 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,13 +56,16 @@ static char	*after_n(char *str)
 	if (str && str[0])
 	{
 		after = ft_strchr(str, '\n');
-		if (after + 1)
+		if (after[0])
 		{
 			after++;
 			str = ft_strcpy(str, after);
 		}
 		else
+		{
+			printf("nullfying buffer\n");
 			ft_memset(str, '\0', BUFF_SIZE);
+		}
 	}
 	return (str);
 }
@@ -80,6 +83,7 @@ static int	fill_line(char **line, char *temp, const int fd)
 	}
 	while ((cursor = read(fd, temp, BUFF_SIZE)))
 	{
+		printf("temp:%s\n", temp);
 		if (cursor < 0)
 			return (cursor);
 		temp[cursor] = '\0';
@@ -89,7 +93,7 @@ static int	fill_line(char **line, char *temp, const int fd)
 		if (ft_strchr(temp, '\n'))
 			return (1);
 		else
-			ft_memset(temp, '\0', BUFF_SIZE);
+			temp[0] = '\0';
 	}
 	return (0);
 }
@@ -112,6 +116,8 @@ int			get_next_line(const int fd, char **line)
 	{
 		temp = after_n(temp);
 		*line = local_line;
+//		if (!temp[0])
+//			ft_memdel((void**)&temp);
 		return (1);
 	}
 	if (cursor == 0 && temp)
