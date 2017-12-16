@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/15 20:20:03 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/16 12:54:35 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static char	*after_n(char *str)
 	if (str && str[0])
 	{
 		after = ft_strchr(str, '\n');
-		if (after[0])
+		if (after && after[0])
 		{
 			after++;
 			str = ft_strcpy(str, after);
@@ -72,7 +72,6 @@ static int	fill_line(char **line, char *temp, const int fd)
 	long cursor;
 
 	cursor = 0;
-//	printf("temp:%s\n", temp);
 	if (temp[0])
 	{
 		*line = ft_strjoin_custom(*line, copy_a_line(temp));
