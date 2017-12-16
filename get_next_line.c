@@ -6,7 +6,7 @@
 /*   By: mfonteni <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 16:50:37 by mfonteni          #+#    #+#             */
-/*   Updated: 2017/12/16 12:54:35 by mfonteni         ###   ########.fr       */
+/*   Updated: 2017/12/16 15:02:43 by mfonteni         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,27 +94,29 @@ static int	fill_line(char **line, char *temp, const int fd)
 
 int			get_next_line(const int fd, char **line)
 {
-	static char		*temp;
+	static t_fd		temp;
 	char			*local_line;
 	long			cursor;
 
-	cursor = 0;
 	local_line = NULL;
-	if ((!temp && !(temp = ft_strnew(BUFF_SIZE)))
-			|| BUFF_SIZE < 1 || fd < 0 || !line)
+	if ((!temp.str && !(!(temp.str = ft_strnew(BUFF_SIZE)))
+		&& !(temp.fd = -1)) || BUFF_SIZE < 1 || fd < 0 || !line)
 		return (-1);
-	cursor = fill_line(&local_line, temp, fd);
+	if (temp.fd != fd)
+		temp.str[0] = '\0';
+	temp.fd = fd;
+	cursor = fill_line(&local_line, temp.str, fd);
 	if (cursor == -1)
 		return (-1);
 	if (local_line && cursor >= 0)
 	{
-		temp = after_n(temp);
+		temp.str = after_n(temp.str);
 		*line = local_line;
-		if (!temp[0])
-			ft_memdel((void**)&temp);
+		if (temp.str[0] == '\0')
+			ft_memdel((void**)&temp.str);
 		return (1);
 	}
-	if (cursor == 0 && temp)
-		ft_memdel((void**)&temp);
+	if (cursor == 0 && temp.str)
+		ft_memdel((void**)&temp.str);
 	return (cursor);
 }
